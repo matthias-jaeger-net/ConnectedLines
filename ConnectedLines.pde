@@ -1,33 +1,38 @@
-void setup() {
-  size(800, 800);
-  background(random(255), random(100), 100);
-  int times = 1000;
-  float x = width/2;
-  float y = height/2;
-  while (times > 0) {
-    float nx = x + random(-180, 180);
-    float ny = y + random(-180, 180);
-    color randomColor = color(random(255), random(100), 100);
-    stroke(randomColor);
-    strokeWeight(20);
-    line(x, y, nx, ny);
+final int SKETCH_W   = 800, SKETCH_H   = 800;
+final int OUTER_LOOP = 300,  INNER_LOOP = 200;
+final int SPREAD     = 180;
 
-    for (int i = 0; i < 5; i++) {
-      float s = random(20, 50);
-      randomColor = color(random(255), random(100), 100);
-      stroke(randomColor);
-      strokeWeight(random(5, 30));
-      randomLine(new float[]{x, y, nx, ny});
-    }
+final int MIN_STROKEWEIGHT = 2;
+final int MAX_STROKEWEIGHT = 4;
+
+float x = SKETCH_W * 0.5f;
+float y = SKETCH_H * 0.5f;
+float nx = x, ny = y;
+
+color randomColor() { return color(random(255), random(100), 100, 200); }
+
+void randomLine(float[] args, float s) {
+  stroke(randomColor());
+  strokeWeight(random(MIN_STROKEWEIGHT, MAX_STROKEWEIGHT));
+  for (int i = 0; i < args.length; i++) args[i] += random(-s, s);
+  line(args[0], args[1], args[2], args[3]);
+}
+
+void renderConnectedLines() {
+  background(255);
+  for (int i = 0; i < OUTER_LOOP; i++) {
+    float nx = x + random(-SPREAD, SPREAD);
+    float ny = y + random(-SPREAD, SPREAD);
+    line(x, y, nx, ny);
+    for (int j = 0; j < INNER_LOOP; j++) 
+      randomLine(new float[]{x, y, nx, ny}, random(20, 50));
     x = nx;
     y = ny;
-    times--;
   }
-  save("out/"+System.currentTimeMillis()+"connectedLines.jpg");
+  saveOutput();
 }
 
-void randomLine(float[] args) {
-  float s = random(20, 50);
-  float x1 = args[0], y1 = args[1], x2 = args[2], y2 = args[3];
-  line(x1+random(-s, s), y1+random(-s, s), x2+random(-s, s), y2+random(-s, s));
-}
+void saveOutput() {   save("out/"+ System.currentTimeMillis() + "-cL.jpg"); }
+void settings()   {  size(SKETCH_W, SKETCH_H); }
+void setup()      { noLoop(); }
+void draw()       { renderConnectedLines(); }
