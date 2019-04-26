@@ -17,7 +17,7 @@ void setup() {
       randomColor = color(random(255), random(100), 100);
       stroke(randomColor);
       strokeWeight(random(5, 30));
-      line(x+random(-s, s), y+random(-s, s), nx+random(-s, s), ny+random(-s, s));
+      randomLine(new float[]{x, y, nx, ny});
     }
     x = nx;
     y = ny;
@@ -26,7 +26,8 @@ void setup() {
   save("out/"+System.currentTimeMillis()+"connectedLines.jpg");
 }
 
-class Line {
-  float x1, y1, x2, y2;
-  
+void randomLine(float[] args) {
+  float s = random(20, 50);
+  float x1 = args[0], y1 = args[1], x2 = args[2], y2 = args[3];
+  line(x1+random(-s, s), y1+random(-s, s), x2+random(-s, s), y2+random(-s, s));
 }
